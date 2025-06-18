@@ -15,7 +15,7 @@ import {
     XStack,
     YStack,
 } from 'tamagui'
-import { blogPosts } from '../../../data/blog'
+import { blogPosts } from '../../data/blog'
 
 export default function BlogPost() {
     const { id } = useLocalSearchParams()
