@@ -2,6 +2,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import { Platform } from 'react-native'
+import TabBarBackground from '../../components/ui/TabBarBackground'
 
 export default function TabLayout() {
     return (
@@ -11,30 +12,31 @@ export default function TabLayout() {
                 tabBarActiveTintColor: '#007AFF',
                 tabBarInactiveTintColor: '#8E8E93',
                 tabBarLabelStyle: { 
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: '600',
                     marginTop: 2,
+                    marginBottom: 2,
+                },
+                tabBarItemStyle: {
+                    paddingVertical: 4,
                 },
                 tabBarStyle: {
-                    backgroundColor: '#FFFFFF',
-                    borderTopWidth: 1,
-                    borderTopColor: '#E5E5EA',
+                    position: 'absolute',
+                    backgroundColor: 'transparent',
+                    borderTopWidth: 0,
                     height: Platform.OS === 'ios' ? 88 : 70,
                     paddingTop: 8,
                     paddingBottom: Platform.OS === 'ios' ? 34 : 10,
                     shadowColor: '#000',
                     shadowOffset: {
                         width: 0,
-                        height: -2,
+                        height: -3,
                     },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 8,
-                    ...Platform.select({
-                        ios: { position: 'absolute' },
-                        default: {},
-                    }),
+                    shadowOpacity: 0.15,
+                    shadowRadius: 12,
+                    elevation: 12,
                 },
+                tabBarBackground: () => <TabBarBackground />,
                 tabBarIcon: ({ color, size, focused }) => {
                     let iconName: keyof typeof Ionicons.glyphMap
 
@@ -49,19 +51,26 @@ export default function TabLayout() {
                             iconName = focused ? 'search' : 'search-outline'
                             break
                         case 'scanner':
-                            iconName = focused ? 'qr-code' : 'qr-code-outline'
-                            break
-                        case 'bookmarks':
-                            iconName = focused ? 'bookmark' : 'bookmark-outline'
+                            iconName = focused ? 'scan' : 'scan-outline'
                             break
                         case 'profile':
-                            iconName = focused ? 'person-circle' : 'person-circle-outline'
+                            iconName = focused ? 'person' : 'person-outline'
                             break
                         default:
                             iconName = 'apps-outline'
                     }
 
-                    return <Ionicons name={iconName} size={size} color={color} />
+                    return (
+                        <Ionicons 
+                            name={iconName} 
+                            size={focused ? size + 2 : size} 
+                            color={color}
+                            style={{
+                                marginTop: focused ? -2 : 0,
+                                transform: focused ? [{ scale: 1.1 }] : [{ scale: 1 }],
+                            }}
+                        />
+                    )
                 },
             })}
         >
@@ -69,42 +78,30 @@ export default function TabLayout() {
                 name="index" 
                 options={{ 
                     title: 'Главная',
-                    tabBarBadge: undefined,
                 }} 
             />
             <Tabs.Screen 
                 name="news" 
                 options={{ 
                     title: 'Новости',
-                    tabBarBadge: undefined,
                 }} 
             />
             <Tabs.Screen 
                 name="search" 
                 options={{ 
                     title: 'Поиск',
-                    tabBarBadge: undefined,
                 }} 
             />
             <Tabs.Screen 
                 name="scanner" 
                 options={{ 
                     title: 'Сканер',
-                    tabBarBadge: undefined,
-                }} 
-            />
-            <Tabs.Screen 
-                name="bookmarks" 
-                options={{ 
-                    title: 'Корзина',
-                    tabBarBadge: 2, // количество товаров в корзине
                 }} 
             />
             <Tabs.Screen 
                 name="profile" 
                 options={{ 
                     title: 'Профиль',
-                    tabBarBadge: undefined,
                 }} 
             />
         </Tabs>

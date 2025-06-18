@@ -932,7 +932,7 @@ export default function MedicineDetail() {
                         backgroundColor="transparent"
                         flexDirection="column"
                         space="$1"
-                        onPress={() => router.push('/bookmarks')}
+                                                        onPress={() => router.push('/profile')}
                         pressStyle={{ scale: 0.95 }}
                         paddingHorizontal="$2"
                         position="relative"

@@ -41,11 +41,11 @@ const quickActions = [
     },
     {
         id: 4,
-        icon: 'bookmark-outline',
-        title: 'Избранное',
-        subtitle: 'Сохраненные лекарства',
+        icon: 'person-outline',
+        title: 'Профиль',
+        subtitle: 'Настройки и история',
         color: '#5856D6',
-        route: '/bookmarks',
+        route: '/profile',
     },
 ]
 
