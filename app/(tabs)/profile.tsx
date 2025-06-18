@@ -58,13 +58,7 @@ const menuItems = [
         subtitle: 'Настройки push',
         color: '#FF3B30' 
     },
-    { 
-        id: 6, 
-        icon: 'help-circle-outline', 
-        title: 'Помощь и поддержка', 
-        subtitle: 'FAQ и контакты',
-        color: '#8E8E93' 
-    },
+
 ]
 
 export default function ProfileScreen() {
@@ -73,7 +67,7 @@ export default function ProfileScreen() {
 
     return (
         <ScrollView backgroundColor="#fff">
-            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4">
+            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" pb="$24">
                 
                 {/* 👤 Профиль пользователя */}
                 <Card

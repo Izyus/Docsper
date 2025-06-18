@@ -2,7 +2,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import { Platform } from 'react-native'
-import TabBarBackground from '../../components/ui/TabBarBackground'
 
 export default function TabLayout() {
     return (
@@ -21,22 +20,14 @@ export default function TabLayout() {
                     paddingVertical: 4,
                 },
                 tabBarStyle: {
-                    position: 'absolute',
-                    backgroundColor: 'transparent',
-                    borderTopWidth: 0,
+                    backgroundColor: '#FFFFFF',
+                    borderTopWidth: 1,
+                    borderTopColor: '#E5E5EA',
                     height: Platform.OS === 'ios' ? 88 : 70,
                     paddingTop: 8,
                     paddingBottom: Platform.OS === 'ios' ? 34 : 10,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                        width: 0,
-                        height: -3,
-                    },
-                    shadowOpacity: 0.15,
-                    shadowRadius: 12,
-                    elevation: 12,
                 },
-                tabBarBackground: () => <TabBarBackground />,
+
                 tabBarIcon: ({ color, size, focused }) => {
                     let iconName: keyof typeof Ionicons.glyphMap
 

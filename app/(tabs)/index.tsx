@@ -98,7 +98,7 @@ export default function HomePage() {
                 zIndex={-1}
             />
             
-            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" pb="$20">
+            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" pb="$24">
                 
                 {/* 🎨 Главный баннер с Docsper.io */}
                 <Card

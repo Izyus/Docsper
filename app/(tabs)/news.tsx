@@ -15,7 +15,7 @@ export default function NewsPage() {
 
     return (
         <ScrollView backgroundColor="#f8f9fa"> {/* 🔹 Легкий серый фон для блогового вида */}
-            <YStack px={isMobile ? "$3" : "$4"} py="$4" space="$5" pb="$8">
+            <YStack px={isMobile ? "$3" : "$4"} py="$4" space="$5" pb="$24">
                 {/* 🔝 Сначала категории */}
                 <CategorySwitcher />
 
