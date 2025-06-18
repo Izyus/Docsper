@@ -1,8 +1,8 @@
 // components/AnalogCountrySelector.tsx
+import { XStack, Button } from 'tamagui'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, XStack } from 'tamagui'
-import { setCountry } from '../redux/medicinesSlice'
 import { RootState } from '../redux/store'
+import { setCountry } from '../redux/medicinesSlice'
 
 const countries = [
     { code: 'RU', label: '🇷🇺 Россия' },

@@ -3,13 +3,13 @@ import { Dimensions } from 'react-native'
 import {
     Button,
     Card,
+    Image,
     ScrollView,
     Separator,
     Text,
     XStack,
     YStack
 } from 'tamagui'
-import TabHeader from '../../components/ui/TabHeader'
 
 const profileData = {
     name: 'Анна Иванова',
@@ -72,33 +72,138 @@ export default function ProfileScreen() {
     const isMobile = screenWidth < 768
 
     return (
-        <ScrollView backgroundColor="#f8f9fa">
-            <YStack px={isMobile ? "$3" : "$4"} py="$4" space="$4">
-                <TabHeader 
-                    icon="person"
-                    title={profileData.name}
-                    subtitle={profileData.email}
-                    accentColor="#007AFF"
-                    stats={[
-                        {
-                            value: profileData.savedMedicines.toString(),
-                            label: "Избранных",
-                            color: "#007AFF"
-                        },
-                        {
-                            value: profileData.searchHistory.toString(),
-                            label: "Поисков",
-                            color: "#34C759"
-                        },
-                        {
-                            value: profileData.consultations.toString(),
-                            label: "Консультаций",
-                            color: "#FF9500"
-                        }
-                    ]}
-                />
+        <ScrollView backgroundColor="#fff">
+            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4">
+                
+                {/* 👤 Профиль пользователя */}
+                <Card
+                    backgroundColor="#fff"
+                    borderRadius="$6"
+                    padding={isMobile ? "$4" : "$5"}
+                    bordered
+                    borderColor="$gray4"
+                    shadowColor="$shadowColor"
+                    shadowRadius={8}
+                    shadowOpacity={0.1}
+                >
+                    <XStack alignItems="center" space={isMobile ? "$3" : "$4"}>
+                        {/* Аватар */}
+                        <YStack
+                            width={isMobile ? 80 : 100}
+                            height={isMobile ? 80 : 100}
+                            backgroundColor="$gray2"
+                            borderRadius="$10"
+                            justifyContent="center"
+                            alignItems="center"
+                            overflow="hidden"
+                            position="relative"
+                        >
+                            <Ionicons name="person-outline" size={isMobile ? 32 : 40} color="#999" />
+                            <Image
+                                source={{ uri: profileData.avatar }}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                }}
+                                resizeMode="cover"
+                            />
+                        </YStack>
 
-                {/* Меню настроек */}
+                        {/* Информация */}
+                        <YStack flex={1} space="$2">
+                            <Text 
+                                fontSize={isMobile ? "$5" : "$6"} 
+                                fontWeight="800" 
+                                color="#1C1C1E"
+                            >
+                                {profileData.name}
+                            </Text>
+                            <Text 
+                                fontSize={isMobile ? "$3" : "$4"} 
+                                color="#6B7280"
+                            >
+                                {profileData.email}
+                            </Text>
+                            <Text 
+                                fontSize={isMobile ? "$2" : "$3"} 
+                                color="#6B7280"
+                            >
+                                Участник с {profileData.joinDate}
+                            </Text>
+                        </YStack>
+
+                        {/* Кнопка редактирования */}
+                        <Button
+                            size={isMobile ? "$3" : "$4"}
+                            backgroundColor="transparent"
+                            borderWidth={1}
+                            borderColor="#007AFF"
+                            borderRadius="$4"
+                            pressStyle={{ scale: 0.96 }}
+                        >
+                            <Ionicons name="create-outline" size={isMobile ? 16 : 20} color="#007AFF" />
+                        </Button>
+                    </XStack>
+                </Card>
+
+                {/* 📊 Быстрая статистика */}
+                <XStack space={isMobile ? "$2" : "$3"} justifyContent="space-between">
+                    <Card
+                        flex={1}
+                        backgroundColor="#fff"
+                        borderRadius="$5"
+                        padding={isMobile ? "$3" : "$4"}
+                        bordered
+                        borderColor="$gray4"
+                        alignItems="center"
+                    >
+                        <Text fontSize={isMobile ? "$6" : "$7"} fontWeight="900" color="#007AFF">
+                            {profileData.savedMedicines}
+                        </Text>
+                        <Text fontSize={isMobile ? "$2" : "$3"} color="#6B7280" textAlign="center">
+                            Избранных
+                        </Text>
+                    </Card>
+
+                    <Card
+                        flex={1}
+                        backgroundColor="#fff"
+                        borderRadius="$5"
+                        padding={isMobile ? "$3" : "$4"}
+                        bordered
+                        borderColor="$gray4"
+                        alignItems="center"
+                    >
+                        <Text fontSize={isMobile ? "$6" : "$7"} fontWeight="900" color="#34C759">
+                            {profileData.searchHistory}
+                        </Text>
+                        <Text fontSize={isMobile ? "$2" : "$3"} color="#6B7280" textAlign="center">
+                            Поисков
+                        </Text>
+                    </Card>
+
+                    <Card
+                        flex={1}
+                        backgroundColor="#fff"
+                        borderRadius="$5"
+                        padding={isMobile ? "$3" : "$4"}
+                        bordered
+                        borderColor="$gray4"
+                        alignItems="center"
+                    >
+                        <Text fontSize={isMobile ? "$6" : "$7"} fontWeight="900" color="#FF9500">
+                            {profileData.consultations}
+                        </Text>
+                        <Text fontSize={isMobile ? "$2" : "$3"} color="#6B7280" textAlign="center">
+                            Врачей
+                        </Text>
+                    </Card>
+                </XStack>
+
+                {/* 📋 Меню настроек */}
                 <Card
                     backgroundColor="#fff"
                     borderRadius="$6"
@@ -150,16 +255,37 @@ export default function ProfileScreen() {
                                             </Text>
                                         </YStack>
 
-                                        <Ionicons name="chevron-forward" size={16} color="#6B7280" />
+                                        <Ionicons 
+                                            name="chevron-forward" 
+                                            size={isMobile ? 16 : 20} 
+                                            color="#C7C7CC" 
+                                        />
                                     </XStack>
                                 </Button>
                                 {index < menuItems.length - 1 && (
-                                    <Separator marginHorizontal="$3" />
+                                    <Separator marginVertical="$1" />
                                 )}
                             </YStack>
                         ))}
                     </YStack>
                 </Card>
+
+                {/* 🚪 Выход */}
+                <Button
+                    backgroundColor="transparent"
+                    borderWidth={1}
+                    borderColor="#FF3B30"
+                    borderRadius="$5"
+                    padding={isMobile ? "$3" : "$4"}
+                    pressStyle={{ scale: 0.98 }}
+                >
+                    <XStack alignItems="center" space="$2">
+                        <Ionicons name="log-out-outline" size={isMobile ? 18 : 20} color="#FF3B30" />
+                        <Text fontSize={isMobile ? "$3" : "$4"} color="#FF3B30" fontWeight="600">
+                            Выйти из аккаунта
+                        </Text>
+                    </XStack>
+                </Button>
             </YStack>
         </ScrollView>
     )

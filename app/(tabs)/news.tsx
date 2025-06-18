@@ -1,51 +1,29 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Dimensions } from 'react-native'
-import {
-    Button,
-    ScrollView,
-    Text,
-    XStack,
-    YStack
-} from 'tamagui'
-import BlogList from '../../components/BlogList'
+import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
+import BlogCard from '../../components/BlogCard'
 import CategorySwitcher from '../../components/CategorySwitcher'
+import NewsHeaderBanner from '../../components/NewsHeaderBanner'
 import PopularToday from '../../components/PopularToday'
+import QuickStatsCard from '../../components/QuickStatsCard'
 import RecentComments from '../../components/RecentComments'
-import TabHeader from '../../components/ui/TabHeader'
+import { blogPosts } from '../../data/blog'
 
 export default function NewsPage() {
     const { width: screenWidth } = Dimensions.get('window')
     const isMobile = screenWidth < 768
 
     return (
-        <ScrollView backgroundColor="#f8f9fa">
+        <ScrollView backgroundColor="#f8f9fa"> {/* 🔹 Легкий серый фон для блогового вида */}
             <YStack px={isMobile ? "$3" : "$4"} py="$4" space="$5" pb="$8">
-                <TabHeader 
-                    icon="newspaper"
-                    title="Новости и статьи"
-                    subtitle="Актуальные новости из мира медицины"
-                    accentColor="#007AFF"
-                    stats={[
-                        {
-                            value: "1,234",
-                            label: "Статей",
-                            color: "#007AFF"
-                        },
-                        {
-                            value: "5,678",
-                            label: "Читателей",
-                            color: "#34C759"
-                        },
-                        {
-                            value: "98%",
-                            label: "Точность",
-                            color: "#FF9500"
-                        }
-                    ]}
-                />
-
                 {/* 🔝 Сначала категории */}
                 <CategorySwitcher />
+
+                {/* 🎨 Градиентный баннер */}
+                <NewsHeaderBanner />
+
+                {/* 📊 Быстрая статистика */}
+                <QuickStatsCard />
 
                 {/* 🔥 Популярное сегодня */}
                 <PopularToday />
@@ -71,7 +49,21 @@ export default function NewsPage() {
                         </Button>
                     </XStack>
 
-                    <BlogList />
+                    {isMobile ? (
+                        // На мобильных - одна карточка в столбец
+                        <YStack space="$4">
+                            {blogPosts.map((post) => (
+                                <BlogCard key={post.id} post={post} />
+                            ))}
+                        </YStack>
+                    ) : (
+                        // На больших экранах - две в ряд
+                        <XStack flexWrap="wrap" justifyContent="space-between" space="$4">
+                            {blogPosts.map((post) => (
+                                <BlogCard key={post.id} post={post} />
+                            ))}
+                        </XStack>
+                    )}
                 </YStack>
             </YStack>
         </ScrollView>
