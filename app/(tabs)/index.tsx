@@ -39,14 +39,7 @@ const quickActions = [
         color: '#FF9500',
         route: '/search',
     },
-    {
-        id: 4,
-        icon: 'person-outline',
-        title: 'Профиль',
-        subtitle: 'Настройки и история',
-        color: '#5856D6',
-        route: '/profile',
-    },
+
 ]
 
 const recentNews = [

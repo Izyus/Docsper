@@ -44,9 +44,7 @@ export default function TabLayout() {
                         case 'scanner':
                             iconName = focused ? 'scan' : 'scan-outline'
                             break
-                        case 'profile':
-                            iconName = focused ? 'person' : 'person-outline'
-                            break
+
                         default:
                             iconName = 'apps-outline'
                     }
@@ -89,12 +87,7 @@ export default function TabLayout() {
                     title: 'Сканер',
                 }} 
             />
-            <Tabs.Screen 
-                name="profile" 
-                options={{ 
-                    title: 'Профиль',
-                }} 
-            />
+
         </Tabs>
     )
 }
