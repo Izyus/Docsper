@@ -1,13 +1,17 @@
-import { Slot } from 'expo-router'
-import { TamaguiProvider, YStack, View } from 'tamagui'
-import config from '../tamagui.config'
-import { Provider } from 'react-redux'
-import { store } from '../redux/store'
+import { Slot, usePathname } from 'expo-router'
 import { useState } from 'react'
+import { Provider } from 'react-redux'
+import { TamaguiProvider, View, YStack } from 'tamagui'
 import SearchBar from '../components/SearchBar'
+import { store } from '../redux/store'
+import config from '../tamagui.config'
 
 export default function RootLayout() {
     const [isSearchActive, setIsSearchActive] = useState(false)
+    const pathname = usePathname()
+    
+    // Показывать кнопки Лайк и Шаринг только на страницах лекарств и новостей
+    const showActionButtons = pathname.includes('/medicine/') || pathname.includes('/blog/')
 
     return (
         <Provider store={store}>
@@ -18,6 +22,7 @@ export default function RootLayout() {
                         <SearchBar
                             onFocus={() => setIsSearchActive(true)}
                             onBlur={() => setIsSearchActive(false)}
+                            showActionButtons={showActionButtons}
                         />
                     </YStack>
 

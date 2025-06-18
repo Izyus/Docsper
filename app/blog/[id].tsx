@@ -67,13 +67,28 @@ export default function BlogPost() {
                         Назад
                     </Button>
                     
-                    <Button
-                        size="$3"
-                        backgroundColor="transparent"
-                        pressStyle={{ scale: 0.9 }}
-                    >
-                        <Ionicons name="share-outline" size={20} color="#007AFF" />
-                    </Button>
+                    <XStack space="$2">
+                        <Button
+                            size="$3"
+                            backgroundColor="transparent"
+                            onPress={handleLike}
+                            pressStyle={{ scale: 0.9 }}
+                        >
+                            <Ionicons 
+                                name={isLiked ? "heart" : "heart-outline"} 
+                                size={20} 
+                                color={isLiked ? "#FF3B30" : "#6B7280"} 
+                            />
+                        </Button>
+                        
+                        <Button
+                            size="$3"
+                            backgroundColor="transparent"
+                            pressStyle={{ scale: 0.9 }}
+                        >
+                            <Ionicons name="share-outline" size={20} color="#007AFF" />
+                        </Button>
+                    </XStack>
                 </XStack>
 
                 {/* Основная статья */}

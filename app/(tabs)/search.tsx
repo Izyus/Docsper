@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Dimensions } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +15,7 @@ import {
     YStack
 } from 'tamagui'
 import AIChatModal from '../../components/AIChatModal'
+import MapWidget from '../../components/MapWidget'
 import MedicineCard from '../../components/MedicineCard'
 import { setCountry } from '../../redux/medicinesSlice'
 import { RootState } from '../../redux/store'
@@ -22,6 +24,13 @@ const countries = [
     { code: 'RU', name: 'Россия' },
     { code: 'US', name: 'США' },
     { code: 'IL', name: 'Израиль' },
+]
+
+// Города для карт
+const cities = [
+    { code: 'moscow', name: 'Москва', country: 'RU', icon: '🏛️' },
+    { code: 'boston', name: 'Бостон', country: 'US', icon: '🏙️' },
+    { code: 'tel-aviv', name: 'Тель-Авив', country: 'IL', icon: '🏖️' },
 ]
 
 const medicalFilters = [
@@ -67,8 +76,10 @@ export default function SearchPage() {
     const dispatch = useDispatch()
     const { width: screenWidth } = Dimensions.get('window')
     const isMobile = screenWidth < 768
+    const router = useRouter()
 
     const [searchMode, setSearchMode] = useState<'basic' | 'pro'>('basic')
+    const [selectedCity, setSelectedCity] = useState('moscow') // По умолчанию Москва
     const [proSearchData, setProSearchData] = useState({
         inn: '',
         indication: '',
@@ -80,6 +91,18 @@ export default function SearchPage() {
     const [basicFilters, setBasicFilters] = useState<string[]>([])
     const [sortBy, setSortBy] = useState('relevance')
     const [showFilters, setShowFilters] = useState(false)
+    const [showMap, setShowMap] = useState(false)
+
+    // Получаем город для выбранной страны
+    const getCityForCountry = (countryCode: string) => {
+        const city = cities.find(c => c.country === countryCode)
+        return city ? city.code : 'moscow'
+    }
+
+    // Обновляем город при смене страны
+    useEffect(() => {
+        setSelectedCity(getCityForCountry(selectedCountry))
+    }, [selectedCountry])
 
     const filtered = items.filter(
         (m) =>
@@ -344,56 +367,148 @@ export default function SearchPage() {
                 </Card>
             )}
 
-            {/* 🔍 Заголовок */}
-            <YStack space="$2">
-                <Text fontSize={isMobile ? "$5" : "$6"} fontWeight="700">
-                    Результаты поиска
-                </Text>
-                <Text fontSize={isMobile ? "$3" : "$4"} color="$gray10">
-                    Найдено {filtered.length} {filtered.length === 1 ? 'аналог' : filtered.length < 5 ? 'аналога' : 'аналогов'} по запросу "{query}"
-                </Text>
-            </YStack>
-
-            {/* 🌍 Страны */}
-            <XStack space="$2" alignItems="center" flexWrap="wrap">
-                {countries.map((country) => {
-                    const countryCount = items.filter(
-                        m => m.name.toLowerCase().includes(query) && m.country === country.code
-                    ).length;
+            {/* 🌍 Свитчер стран с результатами */}
+            <Card
+                backgroundColor="#fff"
+                borderRadius="$6"
+                padding={isMobile ? "$3" : "$4"}
+                bordered
+                borderColor="$gray4"
+                shadowColor="$shadowColor"
+                shadowRadius={8}
+                shadowOpacity={0.1}
+            >
+                <YStack space="$4">
+                    <YStack space="$2">
+                        <Text fontSize={isMobile ? "$4" : "$5"} fontWeight="700" color="#1C1C1E">
+                            Результаты поиска
+                        </Text>
+                        <Text fontSize={isMobile ? "$3" : "$4"} color="$gray10">
+                            Найдено {filtered.length} {filtered.length === 1 ? 'лекарство' : filtered.length < 5 ? 'лекарства' : 'лекарств'} по запросу "{query}"
+                        </Text>
+                    </YStack>
                     
-                    return (
+                    <XStack space="$2" justifyContent="space-between">
+                        {countries.map((country) => {
+                            const countryCount = items.filter(
+                                m => m.name.toLowerCase().includes(query) && m.country === country.code
+                            ).length;
+                            
+                            const isSelected = selectedCountry === country.code;
+                            
+                            return (
+                                <Button
+                                    key={country.code}
+                                    size={isMobile ? "$2" : "$3"}
+                                    backgroundColor={isSelected ? '#007AFF' : 'transparent'}
+                                    borderWidth={2}
+                                    borderColor={isSelected ? '#007AFF' : '#E5E7EB'}
+                                    borderRadius="$4"
+                                    onPress={() => dispatch(setCountry(country.code))}
+                                    pressStyle={{ scale: 0.96 }}
+                                    flex={1}
+                                >
+                                    <XStack alignItems="center" justifyContent="space-between" width="100%">
+                                        <Text 
+                                            fontSize={isMobile ? "$3" : "$4"}
+                                            color={isSelected ? '#fff' : '#1C1C1E'}
+                                            fontWeight="600"
+                                        >
+                                            {country.name}
+                                        </Text>
+                                        
+                                        <XStack 
+                                            backgroundColor={isSelected ? "rgba(255,255,255,0.2)" : "rgba(0,122,255,0.1)"}
+                                            borderRadius="$2"
+                                            px="$1.5"
+                                            py="$0.5"
+                                            alignItems="center"
+                                            space="$1"
+                                        >
+                                            <Ionicons 
+                                                name="checkmark-circle" 
+                                                size={isMobile ? 12 : 14} 
+                                                color={isSelected ? '#fff' : '#007AFF'} 
+                                            />
+                                            <Text 
+                                                fontSize={isMobile ? "$1" : "$2"}
+                                                color={isSelected ? '#fff' : '#007AFF'}
+                                                fontWeight="600"
+                                            >
+                                                {countryCount}
+                                            </Text>
+                                        </XStack>
+                                    </XStack>
+                                </Button>
+                            );
+                        })}
+                    </XStack>
+                    
+                    <XStack alignItems="center" space="$2" backgroundColor="rgba(0,122,255,0.05)" borderRadius="$4" padding="$3">
+                        <Ionicons name="information-circle" size={isMobile ? 16 : 18} color="#007AFF" />
+                        <Text fontSize={isMobile ? "$2" : "$3"} color="#007AFF" flex={1}>
+                            Выберите страну для просмотра доступных аналогов и сравнения цен
+                        </Text>
+                    </XStack>
+                </YStack>
+            </Card>
+
+            {/* 🗺️ Карта аптек */}
+            <Card
+                backgroundColor="#fff"
+                borderRadius="$6"
+                padding={isMobile ? "$2" : "$4"}
+                bordered
+                borderColor="$gray4"
+                shadowColor="$shadowColor"
+                shadowRadius={8}
+                shadowOpacity={0.1}
+            >
+                <YStack space="$2">
+                    <XStack alignItems="center" justifyContent="space-between">
+                        <XStack alignItems="center" space="$3">
+                            <YStack
+                                width={isMobile ? 40 : 48}
+                                height={isMobile ? 40 : 48}
+                                backgroundColor="rgba(0, 122, 255, 0.1)"
+                                borderRadius="$4"
+                                justifyContent="center"
+                                alignItems="center"
+                            >
+                                <Ionicons name="location" size={isMobile ? 20 : 24} color="#007AFF" />
+                            </YStack>
+                            <YStack>
+                                <XStack alignItems="center" space="$2">
+                                    <Text fontSize={isMobile ? "$4" : "$5"} fontWeight="700" color="#1C1C1E">
+                                        Наличие в аптеках
+                                    </Text>
+                                    <Text fontSize={isMobile ? "$3" : "$4"} color="#007AFF" fontWeight="700">
+                                        {cities.find(c => c.code === selectedCity)?.name}
+                                    </Text>
+                                </XStack>
+                            </YStack>
+                        </XStack>
                         <Button
-                            key={country.code}
                             size={isMobile ? "$2" : "$3"}
-                            theme={selectedCountry === country.code ? 'active' : 'gray'}
-                            chromeless={selectedCountry !== country.code}
-                            onPress={() => dispatch(setCountry(country.code))}
-                            mb="$1"
+                            backgroundColor="transparent"
+                            borderWidth={1}
+                            borderColor="$gray4"
+                            borderRadius="$3"
+                            onPress={() => setShowMap(!showMap)}
                             pressStyle={{ scale: 0.96 }}
                         >
-                            <XStack alignItems="center" space="$2">
-                                <Text fontSize={isMobile ? "$2" : "$3"}>
-                                    {country.name}
-                                </Text>
-                                <YStack
-                                    backgroundColor={selectedCountry === country.code ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}
-                                    borderRadius="$2"
-                                    px="$2"
-                                    py="$1"
-                                >
-                                    <Text 
-                                        fontSize={isMobile ? "$1" : "$2"}
-                                        color={selectedCountry === country.code ? '#fff' : '#666'}
-                                        fontWeight="600"
-                                    >
-                                        {countryCount}
-                                    </Text>
-                                </YStack>
-                            </XStack>
+                            <Ionicons 
+                                name={showMap ? "chevron-up" : "chevron-down"} 
+                                size={isMobile ? 16 : 18} 
+                                color="#6B7280" 
+                            />
                         </Button>
-                    );
-                })}
-            </XStack>
+                    </XStack>
+                    {showMap && (
+                        <MapWidget city={selectedCity as 'moscow' | 'boston' | 'tel-aviv'} rect />
+                    )}
+                </YStack>
+            </Card>
 
             {/* 🤖 ИИ помощник */}
             <Card
@@ -705,7 +820,6 @@ export default function SearchPage() {
         <>
             <ScrollView backgroundColor="#fff">
                 <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" backgroundColor="#fff">
-
                     {/* 📋 Переключатель режимов */}
                     <XStack space="$2" backgroundColor="$gray2" borderRadius="$4" padding="$1">
                         <Button
@@ -731,7 +845,6 @@ export default function SearchPage() {
                                 </Text>
                             </XStack>
                         </Button>
-
                         <Button
                             flex={1}
                             size={isMobile ? "$3" : "$4"}
@@ -809,7 +922,6 @@ export default function SearchPage() {
                     )}
                 </YStack>
             </ScrollView>
-
             {/* Модальное окно чата */}
             <AIChatModal 
                 visible={isChatVisible}

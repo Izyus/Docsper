@@ -6,7 +6,15 @@ import { useDispatch } from 'react-redux'
 import { Button, Input, XStack } from 'tamagui'
 import { setQuery } from '../redux/medicinesSlice'
 
-export default function SearchBar() {
+export default function SearchBar({ 
+    onFocus, 
+    onBlur, 
+    showActionButtons = false 
+}: { 
+    onFocus?: () => void, 
+    onBlur?: () => void,
+    showActionButtons?: boolean 
+}) {
     const [text, setText] = useState('')
     const dispatch = useDispatch()
     const router = useRouter()
@@ -23,37 +31,81 @@ export default function SearchBar() {
         <XStack
             space="$2"
             alignItems="center"
-            px={isMobile ? "$2" : "$3"}
-            py="$2"
-            mx={isMobile ? "$2" : "$4"}
-            my="$2"
-            borderRadius={isMobile ? 8 : 12}
-            bg="$gray2"
+            width="100%"
         >
-            <Ionicons name="search" size={isMobile ? 18 : 20} color="#666" />
-
-            <Input
-                flex={1}
-                placeholder="Поиск лекарства"
-                value={text}
-                onChangeText={setText}
-                onSubmitEditing={onSubmit}
-                returnKeyType="search"
-                fontSize={isMobile ? "$3" : "$4"}
-                borderWidth={0}
-                bg="transparent"
-                placeholderTextColor="#999"
-            />
-
+            {/* Кнопка Назад */}
             <Button
-                chromeless
-                onPress={() => {
-                    alert('Голосовой поиск в разработке')
-                }}
-                size={isMobile ? "$2" : "$3"}
+                size={isMobile ? "$3" : "$4"}
+                backgroundColor="#fff"
+                borderRadius="$4"
+                onPress={() => router.back()}
+                pressStyle={{ scale: 0.96 }}
+                bordered
+                borderColor="$gray4"
             >
-                <Ionicons name="mic-outline" size={isMobile ? 18 : 20} color="#666" />
+                <Ionicons name="arrow-back" size={isMobile ? 18 : 20} color="#007AFF" />
             </Button>
+            
+            <XStack flex={1} space="$2" alignItems="center">
+                <Input
+                    flex={1}
+                    placeholder="Поиск лекарств..."
+                    value={text}
+                    onChangeText={setText}
+                    onSubmitEditing={onSubmit}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    size={isMobile ? "$4" : "$5"}
+                    backgroundColor="#fff"
+                    borderRadius="$4"
+                    borderColor="$gray4"
+                    fontSize={isMobile ? "$4" : "$5"}
+                    paddingHorizontal="$3"
+                    paddingVertical="$2"
+                />
+                
+                {/* Иконка микрофона */}
+                <Button
+                    size={isMobile ? "$3" : "$4"}
+                    backgroundColor="#fff"
+                    borderRadius="$4"
+                    onPress={() => alert('Голосовой поиск в разработке')}
+                    pressStyle={{ scale: 0.96 }}
+                    bordered
+                    borderColor="$gray4"
+                >
+                    <Ionicons name="mic-outline" size={isMobile ? 18 : 20} color="#6B7280" />
+                </Button>
+            </XStack>
+
+            {/* Кнопки Лайк и Шаринг - только на страницах новостей и лекарств */}
+            {showActionButtons && (
+                <XStack space="$2">
+                    <Button
+                        size={isMobile ? "$3" : "$4"}
+                        backgroundColor="#fff"
+                        borderRadius="$4"
+                        onPress={() => alert('Добавлено в избранное')}
+                        pressStyle={{ scale: 0.96 }}
+                        bordered
+                        borderColor="$gray4"
+                    >
+                        <Ionicons name="heart-outline" size={isMobile ? 18 : 20} color="#FF3B30" />
+                    </Button>
+
+                    <Button
+                        size={isMobile ? "$3" : "$4"}
+                        backgroundColor="#fff"
+                        borderRadius="$4"
+                        onPress={() => alert('Поделиться')}
+                        pressStyle={{ scale: 0.96 }}
+                        bordered
+                        borderColor="$gray4"
+                    >
+                        <Ionicons name="share-outline" size={isMobile ? 18 : 20} color="#6B7280" />
+                    </Button>
+                </XStack>
+            )}
         </XStack>
     )
 }

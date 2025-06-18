@@ -14,7 +14,7 @@ export default function NewsPage() {
     const isMobile = screenWidth < 768
 
     return (
-        <ScrollView backgroundColor="#f8f9fa"> {/* 🔹 Легкий серый фон для блогового вида */}
+        <ScrollView backgroundColor="#fff">
             <YStack px={isMobile ? "$3" : "$4"} py="$4" space="$5" pb="$24">
                 {/* 🔝 Сначала категории */}
                 <CategorySwitcher />
