@@ -922,6 +922,7 @@ export default function SearchPage() {
                     )}
                 </YStack>
             </ScrollView>
+            
             {/* Модальное окно чата */}
             <AIChatModal 
                 visible={isChatVisible}

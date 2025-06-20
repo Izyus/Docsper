@@ -13,6 +13,8 @@ import {
     XStack,
     YStack
 } from 'tamagui'
+import BottomTabBar from '../../components/BottomTabBar'
+import DoctorBookingModal from '../../components/DoctorBookingModal'
 import MapWidget from '../../components/MapWidget'
 import MedicineCard from '../../components/MedicineCard'
 import { setCountry } from '../../redux/medicinesSlice'
@@ -40,13 +42,94 @@ export default function MedicineDetail() {
     const [showPharmacies, setShowPharmacies] = useState(false)
     const [showComments, setShowComments] = useState(true)
     const [showMap, setShowMap] = useState(false)
+    const [showDoctorBooking, setShowDoctorBooking] = useState(false)
     const [selectedPharmacy, setSelectedPharmacy] = useState<any>(null)
     const [comment, setComment] = useState('')
     const [commentsLiked, setCommentsLiked] = useState<{ [key: number]: boolean }>({})
+    const [selectedAIIndication, setSelectedAIIndication] = useState<'headache' | 'toothache' | 'bruise'>('headache')
 
     // Функция обработки лайков комментариев
     const handleCommentLike = (commentId: number) => {
         setCommentsLiked(prev => ({ ...prev, [commentId]: !prev[commentId] }))
+    }
+
+    // Функция генерации ИИ-инструкций
+    const getAIInstruction = () => {
+        const baseInstructions = {
+            headache: {
+                title: 'Головная боль',
+                instruction: `При головной боли препарат ${medicine?.name} рекомендуется принимать следующим образом:
+
+• **Дозировка:** 1-2 таблетки (500-1000 мг) каждые 4-6 часов
+• **Время приема:** При первых признаках головной боли
+• **Максимальная доза:** Не более 8 таблеток (4000 мг) в сутки
+• **Длительность:** Не более 3-5 дней без консультации врача
+
+**Важные рекомендации:**
+- Принимайте препарат во время или после еды
+- Запивайте большим количеством воды
+- Избегайте алкоголя во время лечения
+- При сохранении боли более 3 дней обратитесь к врачу
+
+**Противопоказания:**
+- Индивидуальная непереносимость
+- Язвенная болезнь желудка
+- Тяжелые заболевания печени и почек`
+            },
+            toothache: {
+                title: 'Зубная боль',
+                instruction: `При зубной боли препарат ${medicine?.name} поможет временно облегчить болевые ощущения:
+
+• **Дозировка:** 1-2 таблетки (500-1000 мг) каждые 4-6 часов
+• **Время приема:** При возникновении зубной боли
+• **Максимальная доза:** Не более 8 таблеток (4000 мг) в сутки
+• **Длительность:** Не более 2-3 дней
+
+**Важные рекомендации:**
+- Препарат снимает только симптомы, не лечит причину
+- Обязательно обратитесь к стоматологу в ближайшее время
+- Принимайте во время или после еды
+- Запивайте водой комнатной температуры
+
+**Дополнительные меры:**
+- Полоскание теплой водой с солью
+- Холодный компресс на щеку
+- Избегайте горячей и холодной пищи
+
+**Противопоказания:**
+- Аллергия на компоненты препарата
+- Язвенная болезнь желудка
+- Беременность (консультация врача обязательна)`
+            },
+            bruise: {
+                title: 'Ушиб',
+                instruction: `При ушибах и травмах препарат ${medicine?.name} поможет снять боль и воспаление:
+
+• **Дозировка:** 1-2 таблетки (500-1000 мг) каждые 6-8 часов
+• **Время приема:** При возникновении боли после травмы
+• **Максимальная доза:** Не более 6 таблеток (3000 мг) в сутки
+• **Длительность:** Не более 5-7 дней
+
+**Важные рекомендации:**
+- Принимайте во время или после еды
+- Запивайте достаточным количеством воды
+- Сочетайте с местными средствами (мази, гели)
+- При сильных ушибах обратитесь к травматологу
+
+**Дополнительные меры:**
+- Холодный компресс в первые 24 часа
+- Покой и ограничение нагрузки на травмированную область
+- Эластичное бинтование при необходимости
+
+**Противопоказания:**
+- Индивидуальная непереносимость
+- Язвенная болезнь желудка
+- Нарушения свертываемости крови
+- Тяжелые травмы (требуют медицинской помощи)`
+            }
+        }
+        
+        return baseInstructions[selectedAIIndication]
     }
 
     // Получаем аналоги в других странах
@@ -133,7 +216,7 @@ export default function MedicineDetail() {
 
     if (!medicine) {
         return (
-            <ScrollView style={{ backgroundColor: "#f8f9fa" }}>
+            <ScrollView style={{ backgroundColor: "#ffffff" }}>
                 <YStack padding="$4" alignItems="center" justifyContent="center" minHeight={400}>
                     <Text fontSize="$6" color="$gray10">Лекарство не найдено</Text>
                     <Button onPress={() => router.back()} mt="$4" backgroundColor="#007AFF">
@@ -145,8 +228,8 @@ export default function MedicineDetail() {
     }
 
     return (
-        <YStack f={1} backgroundColor="#f8f9fa">
-            <ScrollView style={{ backgroundColor: "#f8f9fa" }} showsVerticalScrollIndicator={false}>
+        <YStack f={1} backgroundColor="#ffffff">
+            <ScrollView style={{ backgroundColor: "#ffffff" }} showsVerticalScrollIndicator={false}>
                 <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" pb="$20">
                     
                     {/* 🏷️ Главная карточка лекарства */}
@@ -215,14 +298,27 @@ export default function MedicineDetail() {
                                         <Text fontSize={isMobile ? "$6" : "$7"} fontWeight="900" color="#007AFF">
                                             {medicine.price}
                                         </Text>
-                                        <Button
-                                            size="$3"
-                                            backgroundColor="#007AFF"
-                                            borderRadius="$3"
-                                            onPress={() => setShowPharmacies(true)}
-                                        >
-                                            <Text color="white" fontWeight="600">Купить</Text>
-                                        </Button>
+                                        <XStack space="$2">
+                                            <Button
+                                                size="$3"
+                                                backgroundColor="#007AFF"
+                                                borderRadius="$3"
+                                                onPress={() => setShowPharmacies(true)}
+                                            >
+                                                <Text color="white" fontWeight="600">Купить</Text>
+                                            </Button>
+                                            <Button
+                                                size="$3"
+                                                backgroundColor="#34C759"
+                                                borderRadius="$3"
+                                                onPress={() => setShowDoctorBooking(true)}
+                                            >
+                                                <XStack alignItems="center" space="$1">
+                                                    <Ionicons name="medical-outline" size={16} color="white" />
+                                                    <Text color="white" fontWeight="600">Врач</Text>
+                                                </XStack>
+                                            </Button>
+                                        </XStack>
                                     </XStack>
                                 </YStack>
                             </XStack>
@@ -380,6 +476,152 @@ export default function MedicineDetail() {
                                             </Text>
                                         </XStack>
                                     </YStack>
+                                </YStack>
+                            </Card>
+
+                            {/* 🤖 ИИ-инструкции */}
+                            <Card 
+                                backgroundColor="#fff" 
+                                borderRadius="$6" 
+                                padding={isMobile ? "$4" : "$5"} 
+                                bordered={false}
+                                shadowColor="$shadowColor"
+                                shadowRadius={8}
+                                shadowOpacity={0.1}
+                            >
+                                <YStack space="$4">
+                                    <XStack alignItems="center" space="$3">
+                                        <YStack
+                                            width={40}
+                                            height={40}
+                                            backgroundColor="rgba(88, 86, 214, 0.1)"
+                                            borderRadius="$4"
+                                            justifyContent="center"
+                                            alignItems="center"
+                                        >
+                                            <Ionicons name="sparkles" size={20} color="#5856D6" />
+                                        </YStack>
+                                        <Text fontSize={isMobile ? "$4" : "$5"} fontWeight="700" color="#1C1C1E">
+                                            ИИ-инструкции
+                                        </Text>
+                                    </XStack>
+                                    
+                                    {/* Переключатель показаний */}
+                                    <XStack space="$2" backgroundColor="$gray2" borderRadius="$4" padding="$1">
+                                        <Button
+                                            flex={1}
+                                            size={isMobile ? "$2" : "$3"}
+                                            backgroundColor={selectedAIIndication === 'headache' ? '#5856D6' : 'transparent'}
+                                            borderRadius="$3"
+                                            onPress={() => setSelectedAIIndication('headache')}
+                                            pressStyle={{ scale: 0.98 }}
+                                        >
+                                            <Text 
+                                                color={selectedAIIndication === 'headache' ? '#fff' : '#6B7280'} 
+                                                fontWeight="600"
+                                                fontSize={isMobile ? "$2" : "$3"}
+                                            >
+                                                Головная боль
+                                            </Text>
+                                        </Button>
+                                        <Button
+                                            flex={1}
+                                            size={isMobile ? "$2" : "$3"}
+                                            backgroundColor={selectedAIIndication === 'toothache' ? '#5856D6' : 'transparent'}
+                                            borderRadius="$3"
+                                            onPress={() => setSelectedAIIndication('toothache')}
+                                            pressStyle={{ scale: 0.98 }}
+                                        >
+                                            <Text 
+                                                color={selectedAIIndication === 'toothache' ? '#fff' : '#6B7280'} 
+                                                fontWeight="600"
+                                                fontSize={isMobile ? "$2" : "$3"}
+                                            >
+                                                Зубная боль
+                                            </Text>
+                                        </Button>
+                                        <Button
+                                            flex={1}
+                                            size={isMobile ? "$2" : "$3"}
+                                            backgroundColor={selectedAIIndication === 'bruise' ? '#5856D6' : 'transparent'}
+                                            borderRadius="$3"
+                                            onPress={() => setSelectedAIIndication('bruise')}
+                                            pressStyle={{ scale: 0.98 }}
+                                        >
+                                            <Text 
+                                                color={selectedAIIndication === 'bruise' ? '#fff' : '#6B7280'} 
+                                                fontWeight="600"
+                                                fontSize={isMobile ? "$2" : "$3"}
+                                            >
+                                                Ушиб
+                                            </Text>
+                                        </Button>
+                                    </XStack>
+
+                                    {/* ИИ-инструкция */}
+                                    <Card backgroundColor="#f8f9fa" borderRadius="$4" padding="$3">
+                                        <YStack space="$3">
+                                            <XStack alignItems="center" space="$2">
+                                                <Ionicons name="sparkles" size={16} color="#5856D6" />
+                                                <Text fontSize={isMobile ? "$3" : "$4"} fontWeight="700" color="#1C1C1E">
+                                                    {getAIInstruction().title}
+                                                </Text>
+                                            </XStack>
+                                            <Text 
+                                                fontSize={isMobile ? "$3" : "$4"} 
+                                                color="#374151" 
+                                                lineHeight="$1"
+                                                textAlign="justify"
+                                            >
+                                                {getAIInstruction().instruction}
+                                            </Text>
+                                        </YStack>
+                                    </Card>
+                                </YStack>
+                            </Card>
+
+                            {/* 👨‍⚕️ Консультация с врачом */}
+                            <Card 
+                                backgroundColor="#fff" 
+                                borderRadius="$6" 
+                                padding={isMobile ? "$4" : "$5"} 
+                                bordered={false}
+                                shadowColor="$shadowColor"
+                                shadowRadius={8}
+                                shadowOpacity={0.1}
+                            >
+                                <YStack space="$3">
+                                    <XStack alignItems="center" space="$3">
+                                        <YStack
+                                            width={40}
+                                            height={40}
+                                            backgroundColor="rgba(52, 199, 89, 0.1)"
+                                            borderRadius="$4"
+                                            justifyContent="center"
+                                            alignItems="center"
+                                        >
+                                            <Ionicons name="medical" size={20} color="#34C759" />
+                                        </YStack>
+                                        <Text fontSize={isMobile ? "$4" : "$5"} fontWeight="700" color="#1C1C1E">
+                                            Консультация с врачом
+                                        </Text>
+                                    </XStack>
+                                    <Text fontSize={isMobile ? "$3" : "$4"} color="#374151" lineHeight="$1">
+                                        Получите профессиональную консультацию по приему препарата от опытных врачей. Задайте вопросы о дозировке, противопоказаниях и возможных побочных эффектах.
+                                    </Text>
+                                    <Button
+                                        backgroundColor="#34C759"
+                                        borderRadius="$4"
+                                        onPress={() => setShowDoctorBooking(true)}
+                                        pressStyle={{ scale: 0.96 }}
+                                    >
+                                        <XStack alignItems="center" space="$2">
+                                            <Ionicons name="medical" size={18} color="white" />
+                                            <Text color="white" fontWeight="600" fontSize={isMobile ? "$3" : "$4"}>
+                                                Записаться к врачу
+                                            </Text>
+                                        </XStack>
+                                    </Button>
                                 </YStack>
                             </Card>
 
@@ -929,108 +1171,14 @@ export default function MedicineDetail() {
             </ScrollView>
             
             {/* 🔥 Нижняя панель действий - как стандартное табовое меню */}
-            <YStack 
-                position="absolute" 
-                bottom={0} 
-                left={0} 
-                right={0} 
-                backgroundColor="#FFFFFF" 
-                borderTopWidth={1} 
-                borderTopColor="#E5E5EA"
-                paddingTop={8}
-                paddingBottom={34}
-                paddingHorizontal="$4"
-            >
-                <XStack justifyContent="space-around" alignItems="center">
-                    <Button
-                        flex={1}
-                        backgroundColor="transparent"
-                        borderWidth={0}
-                        onPress={() => router.push('/')}
-                        paddingVertical="$2"
-                        pressStyle={{ scale: 0.95 }}
-                    >
-                        <YStack alignItems="center" space="$1">
-                            <Ionicons name="home-outline" size={22} color="#8E8E93" />
-                            <Text fontSize="$1" color="#8E8E93" fontWeight="600">
-                                Главная
-                            </Text>
-                        </YStack>
-                    </Button>
-
-                    <Button
-                        flex={1}
-                        backgroundColor="transparent"
-                        borderWidth={0}
-                        onPress={() => router.push('/search')}
-                        paddingVertical="$2"
-                        pressStyle={{ scale: 0.95 }}
-                    >
-                        <YStack alignItems="center" space="$1">
-                            <Ionicons name="search-outline" size={22} color="#8E8E93" />
-                            <Text fontSize="$1" color="#8E8E93" fontWeight="600">
-                                Поиск
-                            </Text>
-                        </YStack>
-                    </Button>
-
-                    <Button
-                        flex={1}
-                        backgroundColor="transparent"
-                        borderWidth={0}
-                        onPress={() => setShowPharmacies(!showPharmacies)}
-                        paddingVertical="$2"
-                        pressStyle={{ scale: 0.95 }}
-                    >
-                        <YStack alignItems="center" space="$1">
-                            <Ionicons 
-                                name={showPharmacies ? "storefront" : "storefront-outline"} 
-                                size={showPharmacies ? 24 : 22} 
-                                color={showPharmacies ? "#007AFF" : "#8E8E93"} 
-                            />
-                            <Text 
-                                fontSize="$1" 
-                                color={showPharmacies ? "#007AFF" : "#8E8E93"} 
-                                fontWeight="600"
-                            >
-                                Где купить
-                            </Text>
-                        </YStack>
-                    </Button>
-
-                    <Button
-                        flex={1}
-                        backgroundColor="transparent"
-                        borderWidth={0}
-                        onPress={() => router.push('/news')}
-                        paddingVertical="$2"
-                        pressStyle={{ scale: 0.95 }}
-                    >
-                        <YStack alignItems="center" space="$1">
-                            <Ionicons name="newspaper-outline" size={22} color="#8E8E93" />
-                            <Text fontSize="$1" color="#8E8E93" fontWeight="600">
-                                Новости
-                            </Text>
-                        </YStack>
-                    </Button>
-
-                    <Button
-                        flex={1}
-                        backgroundColor="transparent"
-                        borderWidth={0}
-                        onPress={() => router.push('/profile')}
-                        paddingVertical="$2"
-                        pressStyle={{ scale: 0.95 }}
-                    >
-                        <YStack alignItems="center" space="$1">
-                            <Ionicons name="person-outline" size={22} color="#8E8E93" />
-                            <Text fontSize="$1" color="#8E8E93" fontWeight="600">
-                                Профиль
-                            </Text>
-                        </YStack>
-                    </Button>
-                </XStack>
-            </YStack>
+            <BottomTabBar activeTab="search" />
+            
+            {/* Модальное окно записи к врачу */}
+            <DoctorBookingModal
+                visible={showDoctorBooking}
+                onClose={() => setShowDoctorBooking(false)}
+                medicineName={medicine.name}
+            />
         </YStack>
     )
 }

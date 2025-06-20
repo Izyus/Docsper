@@ -26,6 +26,18 @@ export default function TabLayout() {
                     height: Platform.OS === 'ios' ? 88 : 70,
                     paddingTop: 8,
                     paddingBottom: Platform.OS === 'ios' ? 34 : 10,
+                    position: 'fixed' as any,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    visibility: 'visible',
+                    opacity: 1,
+                    transform: 'translateY(0)',
                 },
 
                 tabBarIcon: ({ color, size, focused }) => {
@@ -43,6 +55,9 @@ export default function TabLayout() {
                             break
                         case 'scanner':
                             iconName = focused ? 'scan' : 'scan-outline'
+                            break
+                        case 'appointments':
+                            iconName = focused ? 'calendar' : 'calendar-outline'
                             break
                         case 'profile':
                             iconName = focused ? 'person' : 'person-outline'
@@ -87,6 +102,12 @@ export default function TabLayout() {
                 name="scanner" 
                 options={{ 
                     title: 'Сканер',
+                }} 
+            />
+            <Tabs.Screen 
+                name="appointments" 
+                options={{ 
+                    title: 'Запись',
                 }} 
             />
             <Tabs.Screen 

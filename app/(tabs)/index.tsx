@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import { Dimensions } from 'react-native'
+import React from 'react'
+import { Dimensions, ScrollView } from 'react-native'
 import { useSelector } from 'react-redux'
 import {
     Button,
     Card,
     Paragraph,
-    ScrollView,
     Text,
     XStack,
     YStack
@@ -15,31 +15,12 @@ import MedicineCard from '../../components/MedicineCard'
 import { RootState } from '../../redux/store'
 
 const quickActions = [
-    {
-        id: 1,
-        icon: 'search-outline',
-        title: 'Поиск аналогов',
-        subtitle: 'Найдите замену препарата',
-        color: '#007AFF',
-        route: '/search',
-    },
-    {
-        id: 2,
-        icon: 'qr-code-outline',
-        title: 'Сканер QR',
-        subtitle: 'Отсканируйте упаковку',
-        color: '#34C759',
-        route: '/scanner',
-    },
-    {
-        id: 3,
-        icon: 'chatbubble-outline',
-        title: 'Чат с ИИ',
-        subtitle: 'Консультация врача',
-        color: '#FF9500',
-        route: '/search',
-    },
-
+    { id: 1, icon: 'search-outline', title: 'Аналоги', color: '#007AFF', route: '/search' },
+    { id: 2, icon: 'qr-code-outline', title: 'Сканер', color: '#34C759', route: '/scanner' },
+    { id: 3, icon: 'chatbubble-ellipses-outline', title: 'Чат ИИ', color: '#FF9500', route: '/search' },
+    { id: 4, icon: 'medkit-outline', title: 'Врач', color: '#5856D6', route: '/appointments' },
+    { id: 5, icon: 'map-outline', title: 'Аптеки', color: '#34C759', route: '/search' },
+    { id: 6, icon: 'document-text-outline', title: 'Рецепты', color: '#007AFF', route: '/profile' },
 ]
 
 const recentNews = [
@@ -79,7 +60,7 @@ export default function HomePage() {
     const popularMedicines = medicines.slice(0, 3)
 
     return (
-        <ScrollView backgroundColor="#f8f9fa">
+        <ScrollView style={{ backgroundColor: "#ffffff", paddingBottom: 100 }}>
             {/* Градиентный фон для шапки */}
             <YStack
                 backgroundColor="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
@@ -91,7 +72,7 @@ export default function HomePage() {
                 zIndex={-1}
             />
             
-            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4" pb="$24">
+            <YStack px={isMobile ? "$3" : "$4"} py={isMobile ? "$3" : "$4"} space="$4">
                 
                 {/* 🎨 Главный баннер с Docsper.io */}
                 <Card
@@ -236,63 +217,41 @@ export default function HomePage() {
                     <Text fontSize={isMobile ? "$5" : "$6"} fontWeight="800" color="#1C1C1E">
                         Быстрые действия
                     </Text>
-                    
-                    <XStack flexWrap="wrap" justifyContent="space-between" space={isMobile ? "$2" : "$3"}>
-                        {quickActions.map((action) => (
-                            <Card
+                    <XStack flexWrap="wrap" justifyContent="flex-start" space={isMobile ? "$2" : "$3"}>
+                        {quickActions.map((action, idx) => (
+                            <Button
                                 key={action.id}
+                                onPress={() => router.push(action.route as any)}
                                 backgroundColor="#fff"
-                                borderRadius="$5"
-                                padding={isMobile ? "$3" : "$4"}
-                                bordered
-                                borderColor="$gray4"
-                                width={isMobile ? "48%" : "23%"}
-                                pressStyle={{ scale: 0.96 }}
-                                shadowColor="$shadowColor"
-                                shadowRadius={4}
-                                shadowOpacity={0.08}
-                                mb="$2"
+                                borderRadius={16}
+                                width={isMobile ? '30%' : '15%'}
+                                minWidth={isMobile ? 90 : 100}
+                                height={isMobile ? 90 : 100}
+                                marginRight={isMobile ? (idx % 3 !== 2 ? 8 : 0) : (idx % 6 !== 5 ? 12 : 0)}
+                                marginBottom={isMobile ? 12 : 16}
+                                alignItems="center"
+                                justifyContent="center"
+                                borderWidth={1}
+                                borderColor="#E5E5EA"
+                                pressStyle={{ scale: 0.97 }}
                             >
-                                <Button
-                                    chromeless
-                                    padding="$0"
-                                    onPress={() => router.push(action.route as any)}
-                                >
-                                    <YStack alignItems="center" space="$2">
-                                        <YStack
-                                            width={isMobile ? 48 : 56}
-                                            height={isMobile ? 48 : 56}
-                                            backgroundColor={action.color + '15'}
-                                            borderRadius="$4"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                        >
-                                            <Ionicons 
-                                                name={action.icon as any} 
-                                                size={isMobile ? 24 : 28} 
-                                                color={action.color} 
-                                            />
-                                        </YStack>
-                                        <Text 
-                                            fontSize={isMobile ? "$3" : "$4"} 
-                                            fontWeight="700" 
-                                            color="#1C1C1E"
-                                            textAlign="center"
-                                            numberOfLines={1}
-                                        >
-                                            {action.title}
-                                        </Text>
-                                        <Text 
-                                            fontSize={isMobile ? "$2" : "$3"} 
-                                            color="#6B7280"
-                                            textAlign="center"
-                                            numberOfLines={2}
-                                        >
-                                            {action.subtitle}
-                                        </Text>
+                                <YStack alignItems="center" justifyContent="center">
+                                    <YStack
+                                        width={isMobile ? 36 : 40}
+                                        height={isMobile ? 36 : 40}
+                                        backgroundColor={action.color + '15'}
+                                        borderRadius={12}
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        mb={6}
+                                    >
+                                        <Ionicons name={action.icon as any} size={isMobile ? 20 : 24} color={action.color} />
                                     </YStack>
-                                </Button>
-                            </Card>
+                                    <Text fontSize={isMobile ? "$3" : "$4"} fontWeight="600" color="#1C1C1E" numberOfLines={1} textAlign="center">
+                                        {action.title}
+                                    </Text>
+                                </YStack>
+                            </Button>
                         ))}
                     </XStack>
                 </YStack>
